@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>机房监控演示</title>
+		<style type="text/css">
+			body, html {
+				width:100%;
+				height:100%;
+				padding:0;
+				margin:0;
+			}
+			#canvasContainer {
+				margin-top: 10px;
+				margin-left: 10px;
+				width: 800px;
+				height:600px;
+				border:slateblue 1px solid;
+				background-color: blanchedalmond;
+			}
+			
+			#propertyGrid {
+				width:300px;
+				position: absolute;
+				left:830px;
+				top:10px;
+			}
+			#propertyGrid ul {
+				list-style: none;
+				border:solid 1px #95B8E7;
+				margin:0;
+				padding:0;
+			}
+			
+			#propertyGrid ul li.group{
+				background-color:#E0ECFF;
+				padding:5px;
+				font-weight: bold;
+			}
+			#propertyGrid ul li.property, #propertyGrid ul li.value{
+				border-bottom: dashed 1px #ccc;
+				display:inline-block;
+				box-sizing: border-box;
+				line-height: 28px;
+				padding:0 3px;
+			}
+			
+			#propertyGrid ul li.property {
+				border-right: dashed 1px #ccc;
+				width:40%;
+			}
+			
+			#propertyGrid ul li.value {
+				border-right: dashed 1px #ccc;
+				width:60%;
+			}
+			
+			#propertyGrid ul li.value input {
+				border: 0;
+				background: none;
+				width: 100%;
+				box-sizing: border-box;
+				outline: none;
+			}
+			
+			#propertyGrid ul li.value input:focus
+			{ 
+				border: 0;
+			}
+			
+			#propertyGrid ul li.value input[disabled] {
+				color:#999;
+			}
+			
+		</style>
+		
+		<script type="text/javascript" src="js/monitor.min.js"></script> 
+	</head>
+	<body>
+		<div id="canvasContainer"></div>
+		<div id="propertyGrid">
+			<ul>
+				<li class="group">布局</li>
+				<li class="property">高度</li><li class="value"><input property="height" disabled/></li>
+				<li class="property">宽度</li><li class="value"><input property="width" disabled/></li>
+				<li class="property">上</li><li class="value"><input property="y" disabled/></li>
+				<li class="property">左</li><li class="value"><input property="x" disabled/></li>
+				<li class="group">外观</li>
+				<li class="property">背景色</li><li class="value"><input property="backgroundColor"/></li>
+				<li class="property">前景色</li><li class="value"><input property="foregroundColor"/></li>
+				<li class="group">里程</li>
+				<li class="property">最大值</li><li class="value"><input property="max"/></li>
+				<li class="property">最小值</li><li class="value"><input property="min"/></li>
+				<li class="property">当前值</li><li class="value"><input property="value"/></li>
+				<li class="group">基本</li>
+				<li class="property">名称</li><li class="value"><input property="title"/></li>
+			</ul>
+		</div>
+		<script type="text/javascript">
+			
+			var map = new Monitor.Map("canvasContainer");
+			var layer = new Monitor.Layer.Vector("矢量图层");
+			map.addLayer(layer);
+			
+			var modifyFeature = new Monitor.Control.ModifyFeature(layer);
+			map.addControl(modifyFeature);
+			modifyFeature.activate();
+			modifyFeature.events.register("featureselected", null, onselected);
+			modifyFeature.events.register("featuremodified", null, onselected);
+			
+			var dlbiaopanFeature1 = new Monitor.Feature.Vector(new DLBiaoPan({
+				value: 30, x: 50, y: 50,width: 180,height: 180
+			}));
+			
+			
+			var dlbiaopanFeature2 = new Monitor.Feature.Vector(new DLBiaoPan({
+				value: 68, x: 350, y:350 ,width: 100,height: 100
+			}));
+			
+			
+			var tempraryFeature = new Monitor.Feature.Vector(new Temprary({
+				value: 68, x: 50, y:300 ,width: 250,height: 250
+			}));
+			
+			layer.addFeatures([dlbiaopanFeature1, dlbiaopanFeature2, tempraryFeature]);
+
+			var valueCells = document.querySelectorAll(".value input");
+			var num = valueCells.length;
+			var flag = false;
+			var feature = null;
+			while(num--) {
+				valueCells[num].addEventListener("change", onchange);
+			}
+			function onchange(evt) {
+				if(!flag && feature) {
+					var property = this.getAttribute("property");
+					if(typeof feature.geometry[property] == "number") {
+						if(!isNaN(this.value)) {
+							feature.geometry[property] = Number(this.value);
+							feature.draw();
+						}
+					} else if(typeof feature.geometry[property] == "string") {
+						feature.geometry[property] = this.value;
+						feature.draw();
+					}
+				}
+			}
+			function onselected(evt) {
+				var property;
+				var cell;
+				feature = evt;
+				num = valueCells.length;
+				flag = true;
+				while(num--) {
+					cell = valueCells[num];
+					property = cell.getAttribute("property");
+					cell.value = feature.geometry[property];
+				}
+				flag = false;
+			}
+		</script>
+	</body>
+</html>
