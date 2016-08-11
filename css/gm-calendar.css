@@ -109,6 +109,7 @@ table.gm-calendar-table td.gm-selected .gm-calendar-content{
 }
 
 .gm-calendar-tips p.gm-content {
+	padding: 3px;
 	background-color: #fff;
 	color: #333;
 }

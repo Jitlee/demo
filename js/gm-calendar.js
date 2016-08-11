@@ -77,6 +77,12 @@
 			}
 		},
 		
+		getCell: function(monthType, day, callback) {
+			if(this.renderer) {
+				this.renderer.getCell(monthType, day, callback);
+			}
+		},
+		
 		today: function() {
 			this.gotoDate(new Date());
 		},
@@ -321,8 +327,8 @@
 			$("p.gm-week", this.tips).text("星期" + lunar.week);
 			$("p.gm-lunar", this.tips).text([lunar.lunarYear, "农历", lunar.lunarMonth + "月", lunar.lunarDate].join(" "));
 			var options = this.calendar.options;
+			var content = $("p.gm-content").empty();
 			if(options.renderCallbacks && $.isFunction(options.renderCallbacks.renderTipsContent)) {
-				var content = $("p.gm-content");
 				var ret = options.renderCallbacks.renderTipsContent.apply(this, [cell, content, lunar]);
 				if(ret === true) {
 					content.show();
@@ -344,6 +350,33 @@
 					var lunar = cell.data("lunar");
 					callback.apply(renderer, [cell, content, lunar]);
 				});
+			}
+		},
+		
+		// 绑定数据
+		getCell: function(monthType, day, callback) {
+			var _date = this.calendar.date;
+			var table = this.table;
+			var renderer = this;
+			if($.isFunction(callback)) {
+				var selector = "td"
+				switch(monthType) {
+					case -1:
+						selector = "td.gm-calendar-last-month";
+						break
+					case 0:
+						selector = "td.gm-calendar-current-month";
+						break
+					case 1:
+						selector = "td.gm-calendar-next-month";
+						break
+				};
+				var cell = $(selector + "[gm-day=\"" +  day + "\"]", table);
+				if(cell.length > 0) {
+					var content = $(".gm-calendar-content", cell);
+					var lunar = cell.data("lunar");
+					callback.apply(renderer, [cell, content, lunar]);
+				}
 			}
 		},
 		
@@ -436,6 +469,7 @@
 			lunar = lunarCalendar.convert(date);
 			lunar.monthType = monthType;
 			cell.data("lunar", lunar);
+			cell.attr("gm-day", date.getDate());
 			var ret = false;
 			if(options.renderCallbacks && $.isFunction(options.renderCallbacks.renderCell)) {
 				ret = options.renderCallbacks.renderCell.apply(this, [cell, lunar]);

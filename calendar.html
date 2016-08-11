@@ -4,13 +4,6 @@
 		<meta charset="utf-8" />
 		<title></title>
 		<link rel="stylesheet" type="text/css" href="css/gm-calendar.css" />
-		
-		<style>
-			.fc {
-				height: 500px;
-				width: 100px;
-			}
-		</style>
 	</head>
 </body>
 	<body>
@@ -39,44 +32,113 @@
 		<script src="js/gm-calendar.js"></script>
 		<script>
 			var gmCalendar = $(".gm-calendar").gmCalendar({
-				firstDay: 1,
+				firstDay: 0, // 默认：0， 星期的开始参数,(0:星期天，1，星期一，。。。)
 				renderCallbacks: {
-		//						renderCellContent: function(cell, content, lunar) {
-		//							if(lunar.monthType == 0) {
-		//								content.text("迟到了");
-		//							}
-		//						},
+					// 自定义单个渲染日历单元格的所有内容
+					// renderCell: function(cell, content, lunar) { },
+					// 自定义单个渲染日历单元格中间的内容
+					// renderCellContent: function(cell, content, lunar) { },
+					// 自定义全局提示框模板
+					// createTips: function(cell, content, lunar) { },
+					
+					// 自定义提示空白部分的内容
 					renderTipsContent: function(cell, content, lunar) {
-						var dataInfo = cell.data("user-info");
-						if(dataInfo) {
-							content.text(dataInfo);
+						// cell 是日历的单元格td的jQuery对象
+						// content 是单元格中间区域单div单jQuery对象
+						// lunar 是日历数据，包含公历、阳历、节气、假日等数据
+						
+						// 从单元格(td)获取当初缓存的考勤数据
+						var atten = cell.data("atten");
+						if(atten) {
+							var beginTime = atten.beginTime;
+							var endTime = atten.endTime;
+							// 将考勤数据显示在鼠标提示的 空白区域
+							$("<span>").appendTo(content).text("上班时间：" + beginTime);
+							$("<br>").appendTo(content);
+							$("<span>").appendTo(content).text("下班时间：" + endTime);
 							return true;
 						}
 					},
 				},
 				callbacks: {
-					click: function(cell, lunar) {
-					},
+					// 鼠标单击回调(如果click: false,可以禁止日历控件内部的单击事件)
+					// click: function(cell, lunar) {},
+					// 鼠标经过回调(如果hover: false,可以禁止日历控件内部的鼠标经过事件，同时也没有提示框了)
+					// hover: function(cell, lunar) {},
+					// 当年或月有变化时，处罚翻页事件
 					page:function(lunar) { // 翻月了
 						queryData(lunar);
 					}
 				}
 			});
 			function queryData(lunar) {
-				window.setTimeout(function() {
-					gmCalendar.gmCalendar("bindData", function(cell, content, lunar) {
-						if(lunar.monthType == 0) {
-							if(lunar.date.getDate() % 3 == 0) {
-								content.text("迟到");
-								cell.data("user-info", "上班时间: 9:03");
-							} else if(lunar.date.getDate() % 5 == 0) {
-								content.text("旷课");
-								cell.data("user-info", "下班时间: 5:50");
-							}
-						}
-					});
+				var date = lunar.date; // 日历控件的 当前时间
+				var month = date.getFullYear(); // 年（2016～）
+				var month = date.getMonth(); // 月(0～11)
+				var _date = date.getMonth(); // 日期（1～31）
+				// 假的Ajax.....
+				testAjax(function(attendanceData) {
 					
-				})
+					// -------------------------
+					// 绑定数据开始
+					if(attendanceData && attendanceData.length > 0) {
+						// 绑定数据到日历控件
+						// montType(0: 当前月, -1:上个月, 1: 下个月)
+						var monthType = 0; // 只管当前月的
+						$.each(attendanceData, function(i, atten) {
+							var day = atten.day; // 考勤的日期(1~31);
+							gmCalendar.gmCalendar("getCell", monthType, day, function(cell, content, lunar) {
+								// cell 是日历的单元格td的jQuery对象
+								// content 是单元格中间区域单div单jQuery对象
+								// lunar 是日历数据，包含公历、阳历、节气、假日等数据
+								
+								// 保存考勤当天单数据（鼠标提示单时候用到）
+								cell.data("atten", atten);
+								
+								// 将状态写到content
+								var attenStatus = atten.attenStatus;
+								content.text(attenStatus);
+							});
+						});
+					}
+					// 绑定数据结束
+					// -------------------------
+				});
+				
+				
+			}
+			
+			function testAjax(callback) {
+				// 假装去服务器请求数据
+				window.setTimeout(function() {
+					var attendanceData = [
+						{ day: 1, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 2, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 3, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 4, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 6, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 8, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 9, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 10, attenStatus: "缺勤", beginTime: "1：55", endTime: "6：10" },
+						{ day: 11, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 13, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 14, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 15, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 17, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 19, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 20, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 21, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 22, attenStatus: "缺勤", beginTime: "1：32", endTime: "6：30" },
+						{ day: 23, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 24, attenStatus: "迟到", beginTime: "9：32", endTime: "6：30" },
+						{ day: 25, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 27, attenStatus: "早退", beginTime: "9：00", endTime: "4：30" },
+						{ day: 29, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+						{ day: 30, attenStatus: "迟到早退", beginTime: "9：32", endTime: "4：30" },
+						{ day: 31, attenStatus: "正常", beginTime: "8：55", endTime: "6：10" },
+					];
+					callback(attendanceData);
+				}, 100);
 			}
 		</script>
 	</body>
