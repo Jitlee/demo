@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script src="js/jquery-1.8.3.min.js"></script>
+		<!--<script src="libs/artDialog/jquery.artDialog.js?skin=twitter"></script>-->
+		<script src="libs/artDialog/jquery.artDialog.source.js"></script>
+		<script src="libs/artDialog/iframeTools.js"></script>
+		
+		切换皮肤：
+		<a href="dailog.html?skin=default">default</a>
+		<a href="dailog.html?skin=black">black</a>
+		<a href="dailog.html?skin=blue">blue</a>
+		<a href="dailog.html?skin=chrome">chrome</a>
+		<a href="dailog.html?skin=green">green</a>
+		<a href="dailog.html?skin=idialog">idialog</a>
+		<a href="dailog.html?skin=opera">opera</a>
+		<a href="dailog.html?skin=simple">simple</a>
+		<a href="dailog.html?skin=twitter">twitter</a>
+		<br />
+		<br />
+		<br />
+		
+		<!-- 以下为示例代码  -->
+		
+		<button id="addButton">打开url对话框</button>
+		
+		
+		<script>
+		(function (config) {
+		    config['lock'] = true;
+		    config['fixed'] = true;
+		    config['opacity'] = .4;
+		    config['okVal'] = '确定';
+		    config['cancelVal'] = '取消';
+    			// [more..]
+			})(art.dialog.defaults);
+
+			$(function() {
+				$("#addButton").click(function() {
+					art.dialog.open('dailog/form.html', {
+					    	title: '提交表单',
+					    // 在open()方法中，init会等待iframe加载完毕后执行
+					    init: function () {
+					    		var iframe = this.iframe.contentWindow;
+					    		var top = art.dialog.top;// 引用顶层页面window对象
+					        var field1 = iframe.document.getElementById('field1');
+					        var field2 = iframe.document.getElementById('field2');
+					        field1.value = "默认值1";
+					        field2.value = "默认值2";
+					    },
+					    ok: function () {
+					    		var iframe = this.iframe.contentWindow;
+					    		if (!iframe.document.body) {
+					        		alert('iframe还没加载完毕呢')
+					        		return false;
+					        };
+					        var form = iframe.document.getElementById('form');
+					    		var field1 = iframe.document.getElementById('field1');
+					        var field2 = iframe.document.getElementById('field2');
+					        
+					        alert("{ field1: \"" + field1.value + "\", field2: \"" +  field2.value + "\" }");
+					        
+					       	return false;
+					    },
+					    cancel: true
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
