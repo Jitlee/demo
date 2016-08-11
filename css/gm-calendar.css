@@ -13,10 +13,11 @@ table.gm-calendar-table {
 table.gm-calendar-table th {
 	background-color: #fafafa;
 	color: #888;
-		border-left: 1px #eee solid;
-		text-align: center;
-		padding:5px;
-		height:20px;
+	border-left: 1px #eee solid;
+	text-align: center;
+	padding:5px;
+	height:20px;
+	width: 14.28%;
 }
 
 table.gm-calendar-table td {
