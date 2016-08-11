@@ -50,13 +50,16 @@
 						// 从单元格(td)获取当初缓存的考勤数据
 						var atten = cell.data("atten");
 						if(atten) {
-							var beginTime = atten.beginTime;
-							var endTime = atten.endTime;
-							// 将考勤数据显示在鼠标提示的 空白区域
-							$("<span>").appendTo(content).text("上班时间：" + beginTime);
-							$("<br>").appendTo(content);
-							$("<span>").appendTo(content).text("下班时间：" + endTime);
-							return true;
+							var attenStatus = atten.attenStatus;
+							if(attenStatus != "缺勤") {
+								var beginTime = atten.beginTime;
+								var endTime = atten.endTime;
+								// 将考勤数据显示在鼠标提示的 空白区域
+								$("<span>").appendTo(content).text("上班时间：" + beginTime);
+								$("<br>").appendTo(content);
+								$("<span>").appendTo(content).text("下班时间：" + endTime);
+								return true;
+							}
 						}
 					},
 				},
