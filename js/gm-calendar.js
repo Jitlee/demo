@@ -124,6 +124,10 @@
 		
 		// 前往日期
 		gotoDate: function(newDate) {
+			if(newDate.getFullYear() == this.date.getFullYear()
+				&& newDate.getMonth() == this.date.getMonth()) {
+				return;
+			}
 			this.date = newDate;
 			if(this.renderer) {
 				this.renderer.renderDate();
