@@ -1,0 +1,135 @@
+.gm-calendar-body {
+	position:relative;
+	background: white;
+		border: 1px solid #A4BED4;
+		cursor: default;
+	font-size: 12px;
+}
+
+table.gm-calendar-table {
+	width: 100%;
+}
+
+table.gm-calendar-table th {
+	background-color: #fafafa;
+	color: #888;
+		border-left: 1px #eee solid;
+		text-align: center;
+		padding:5px;
+		height:20px;
+}
+
+table.gm-calendar-table td {
+	position: relative;
+	padding: 5px;
+	height: 60px;
+}
+
+.gm-calendar-table td {
+	border-left: 1px solid #eee;
+		border-top: 1px solid #eee;
+}
+
+table.gm-calendar-table gm-calendar-weekend {
+	background-color: #FEFEFE;
+}
+
+table.gm-calendar-table div.gm-calendar-lunar {
+	position: absolute;
+	left: 5px;
+	top: 5px;
+	color: #999;
+}
+
+table.gm-calendar-table .gm-calendar-solar {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
+table.gm-calendar-table .gm-calendar-content {
+	text-align: center;
+	vertical-align: middle;
+	padding: 5px;
+}
+
+table.gm-calendar-table .gm-calendar-current-month .gm-calendar-content {
+	color: #000;
+	font-size: 13px;
+}
+
+table.gm-calendar-table .gm-calendar-last-month,
+ table.gm-calendar-table .gm-calendar-next-month {
+	color: #ccc;
+}
+
+table.gm-calendar-table .gm-calendar-last-month .gm-calendar-content,
+ table.gm-calendar-table .gm-calendar-next-month .gm-calendar-content {
+	font-size: 12px;
+	color: #ccc;
+	background: none;
+}
+
+table.gm-calendar-table .gm-calendar-important div.gm-calendar-lunar {
+	color: #e02d2d;
+}
+
+table.gm-calendar-table td.gm-selected,
+table.gm-calendar-table td.gm-selected .gm-calendar-lunar,
+table.gm-calendar-table td.gm-selected .gm-calendar-solar,
+table.gm-calendar-table td.gm-selected .gm-calendar-content{
+	background-color: #81d0f2;
+	color: #fff;
+}
+
+.gm-calendar-tips {
+	position: absolute;
+	display:none;
+	width: 150px;
+	border-radius: 5px;
+	z-index: 10px;
+	text-align: right;
+	opacity: 0.8;
+	filter: Alpha(opacity=80);
+	background-color: #E0366E;
+	pointer-events: none;
+	
+	font-size: 12px;
+	color: #fff; 
+	padding: 5px;
+}
+
+.gm-calendar-tips p {
+	line-height: 1.2;
+	margin:0;
+}
+
+.gm-calendar-tips p.gm-lunar {
+	color: #ff0;
+}
+
+.gm-calendar-tips p.gm-content {
+	background-color: #fff;
+	color: #333;
+}
+
+.gm-calendar-tools {
+	height:40px;
+	background-color: #E0366E;
+	font-size: 12px;
+	color: #fff;
+	position: relative;
+}
+
+.gm-calendar-tools .gm-title {
+	height:40px;
+	line-height: 40px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.gm-calendar-tools .gm-buttons {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}

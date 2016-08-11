@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/gm-calendar.css" />
+		
+		<style>
+			.fc {
+				height: 500px;
+				width: 100px;
+			}
+		</style>
+	</head>
+</body>
+	<body>
+		
+		<div class="gm-calendar">
+			<div class="gm-calendar-tools">
+				<p class="gm-title">
+					<span gm-bind="year"></span>年&nbsp;
+					<span gm-bind="capitalMonth"></span>月&nbsp;
+					<span gm-bind="lunarYear"></span>&nbsp;
+				</p>
+				<div class="gm-buttons">
+					<button gm-command="today">今天</button>
+					&nbsp;
+					&nbsp;
+					<button gm-command="lastYear">上一年</button>
+					<button gm-command="lastMonth">上月</button>
+					<button gm-command="nextMonth">下月</button>
+					<button gm-command="nextYear">下一年</button>
+				</div>
+			</div>
+		</div>
+
+		
+		<script src="js/jquery-1.8.3.min.js"></script>
+		<script src="js/gm-calendar.js"></script>
+		<script>
+			var gmCalendar = $(".gm-calendar").gmCalendar({
+				firstDay: 1,
+				renderCallbacks: {
+		//						renderCellContent: function(cell, content, lunar) {
+		//							if(lunar.monthType == 0) {
+		//								content.text("迟到了");
+		//							}
+		//						},
+					renderTipsContent: function(cell, content, lunar) {
+						var dataInfo = cell.data("user-info");
+						if(dataInfo) {
+							content.text(dataInfo);
+							return true;
+						}
+					},
+				},
+				callbacks: {
+					click: function(cell, lunar) {
+					},
+					page:function(lunar) { // 翻月了
+						queryData(lunar);
+					}
+				}
+			});
+			function queryData(lunar) {
+				window.setTimeout(function() {
+					gmCalendar.gmCalendar("bindData", function(cell, content, lunar) {
+						if(lunar.monthType == 0) {
+							if(lunar.date.getDate() % 3 == 0) {
+								content.text("迟到");
+								cell.data("user-info", "上班时间: 9:03");
+							} else if(lunar.date.getDate() % 5 == 0) {
+								content.text("旷课");
+								cell.data("user-info", "下班时间: 5:50");
+							}
+						}
+					});
+					
+				})
+			}
+		</script>
+	</body>
+</html>
